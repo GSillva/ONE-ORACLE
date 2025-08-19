@@ -1,0 +1,133 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ */
+
+package com.mycompany.mavenproject3;
+
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Scanner;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+public class Mavenproject3 {
+
+    // Coloque sua API Key aqui
+    private static final String API_KEY = "";
+
+    // Método para buscar a taxa de câmbio na API
+    public static double getExchangeRate(String base, String target) {
+        try {
+            // URL da API com chave
+            String urlStr = "https://v6.exchangerate-api.com/v6/" + API_KEY + "/latest/" + base;
+            URL url = new URL(urlStr);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+
+            // Ler resposta
+            InputStreamReader reader = new InputStreamReader(conn.getInputStream());
+            JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
+
+            // Se deu erro na resposta
+            if (!json.get("result").getAsString().equals("success")) {
+                System.out.println("Erro na API: " + json.get("error-type").getAsString());
+                return -1;
+            }
+
+            // Pegar a taxa do JSON
+            JsonObject rates = json.getAsJsonObject("conversion_rates");
+            return rates.get(target).getAsDouble();
+
+        } catch (Exception e) {
+            System.out.println("Erro ao buscar taxa de câmbio: " + e.getMessage());
+            return -1;
+        }
+    }
+
+    public static void main(String[] args) {
+        String str = """
+            Qual conversão deseja:
+            1: Dólar -> Peso argentino
+            2: Peso Argentino -> Dólar
+            3: Dólar -> Real
+            4: Real -> Dólar
+            5: Dólar -> Peso Colombiano
+            6: Peso Colombiano -> Dólar
+            7: Sair
+            """;
+
+        int des;
+        double val;
+        boolean loop = true;
+        Scanner leitura = new Scanner(System.in);
+
+        while (loop) {
+            System.out.println(str);
+            des = leitura.nextInt();
+
+            switch (des) {
+                case 1 -> {
+                    System.out.println("Quanto quer converter?");
+                    val = leitura.nextDouble();
+                    double rate = getExchangeRate("USD", "ARS");
+                    if (rate > 0) {
+                        double convertido = val * rate;
+                        System.out.printf("%.2f [USD] é igual a %.2f [ARS]%n", val, convertido);
+                    }
+                }
+                case 2 -> {
+                    System.out.println("Quanto quer converter?");
+                    val = leitura.nextDouble();
+                    double rate = getExchangeRate("ARS", "USD");
+                    if (rate > 0) {
+                        double convertido = val * rate;
+                        System.out.printf("%.2f [ARS] é igual a %.2f [USD]%n", val, convertido);
+                    }
+                }
+                case 3 -> {
+                    System.out.println("Quanto quer converter?");
+                    val = leitura.nextDouble();
+                    double rate = getExchangeRate("USD", "BRL");
+                    if (rate > 0) {
+                        double convertido = val * rate;
+                        System.out.printf("%.2f [USD] é igual a %.2f [BRL]%n", val, convertido);
+                    }
+                }
+                case 4 -> {
+                    System.out.println("Quanto quer converter?");
+                    val = leitura.nextDouble();
+                    double rate = getExchangeRate("BRL", "USD");
+                    if (rate > 0) {
+                        double convertido = val * rate;
+                        System.out.printf("%.2f [BRL] é igual a %.2f [USD]%n", val, convertido);
+                    }
+                }
+                case 5 -> {
+                    System.out.println("Quanto quer converter?");
+                    val = leitura.nextDouble();
+                    double rate = getExchangeRate("USD", "COP");
+                    if (rate > 0) {
+                        double convertido = val * rate;
+                        System.out.printf("%.2f [USD] é igual a %.2f [COP]%n", val, convertido);
+                    }
+                }
+                case 6 -> {
+                    System.out.println("Quanto quer converter?");
+                    val = leitura.nextDouble();
+                    double rate = getExchangeRate("COP", "USD");
+                    if (rate > 0) {
+                        double convertido = val * rate;
+                        System.out.printf("%.2f [COP] é igual a %.2f [USD]%n", val, convertido);
+                    }
+                }
+                case 7 -> {
+                    System.out.println("Até mais");
+                    loop = false;
+                }
+                default -> System.out.println("Opção inválida, tente novamente.");
+            }
+        }
+        leitura.close();
+    }
+}
