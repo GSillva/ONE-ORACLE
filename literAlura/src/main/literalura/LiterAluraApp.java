@@ -1,3 +1,12 @@
+package com.example.literalura;
+
+import com.example.literalura.service.GutendexService;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import java.util.Scanner;
+
 @SpringBootApplication
 public class LiterAluraApp implements CommandLineRunner {
     private final GutendexService gutendexService;
